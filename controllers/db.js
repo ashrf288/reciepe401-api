@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 
-mongoose.connect(`mongodb://ashrf:1234@cluster0-shard-00-00.qfd84.mongodb.net:27017,cluster0-shard-00-01.qfd84.mongodb.net:27017,cluster0-shard-00-02.qfd84.mongodb.net:27017/User?ssl=true&replicaSet=atlas-qp17uo-shard-0&authSource=admin&retryWrites=true&w=majority`);
+mongoose.connect(process.env.MONGODB_URI);
 
 
 let RecipeSchema=mongoose.Schema({
