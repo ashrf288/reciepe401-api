@@ -12,9 +12,9 @@ const PORT=process.env.PORT;
 
 app.get('/',getall);
 //////// user logged in 
-app.get('/fav',getFav);
-app.post('/add',addRecipe);
-app.put('/update/:id',updRecipe)
+app.get('/fav/:email',getFav);
+app.post('/add/:email',addRecipe);
+app.put('/update/:email',updRecipe)
 app.delete('/delete/:id',deleteRecipe)
 
 app.listen(PORT,console.log(`on port ${PORT}`))

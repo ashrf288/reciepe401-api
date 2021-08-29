@@ -4,36 +4,67 @@ const mongoose = require('mongoose');
 
 mongoose.connect(process.env.MONGODB_URI);
 
-
-let RecipeSchema=mongoose.Schema({
+RecipeSchema=mongoose.Schema({
     name:String,
     image:String,
     calories:Number
 })
 
+let UserSchema=mongoose.Schema({
+    email:String,
+    recipes:[RecipeSchema]
 
-let Recipe=mongoose.model('Recipe',RecipeSchema);
+})
+
+
+let Recipe=mongoose.model('Recipe',UserSchema);
+
+// let a=new Recipe({
+//     email:'ashrfmathkour@gmail.com',
+//     recipes:[{
+//         name:"Baked Chicken",
+//         image:"https://www.edamam.com/web-img/01c/01cacb70890274fb7b7cebb975a93231.jp...",
+//         calories:901.58575
+//     }]
+// })
+// a.save()
+
 
 
 getFav=(req,res)=>{
-    Recipe.find().then(result=>res.json(result)).catch(err=>res.json(err))
+    let email=req.params.email;
+    Recipe.find({email:email}).then(result=>res.json(result)).catch(err=>res.json(err))
+    
 }
 
 addRecipe=(req,res)=>{
+    let email=req.params.email;
    let data=req.body
-    let recipe=new Recipe(data)
-    recipe.save();
-    res.status(200).json('recipe added secssufully')
+   Recipe.find({email:email})
+   .then(result=>{
+       console.log(result)
+       result[0].recipes.push(data);
+       result[0].save();
+       res.json(result)
+    })
+    .catch(err=>res.json(err))
+    // let recipe=new Recipe(data)
+    // recipe.save();
+    // res.status(200).json('recipe added secssufully')
 }
 
 
 updRecipe=(req,res)=>{
-    id=req.params.id;
-    data=req.body
-    Recipe.findByIdAndUpdate({_id:id},{$set:data}).then(result=>{
-        if(result){res.status(200).json({msg:'user updated seccsuffuly',resul:result})}
-        else{res.status(404).json('recipe with that id not found')}
-    }).catch(err=>res.status(500).json({msg:'plese provide a valid id ',error:err}))
+    let email=req.params.email;
+    let data=req.body
+    let id=data.id
+ 
+   Recipe.findOneAndUpdate({email:email},{$set:data}).then(result=>{
+      res.json(result)
+   }).catch(err=>res.json(err))
+
+
+ 
 }
 
 deleteRecipe=(req,res)=>{
