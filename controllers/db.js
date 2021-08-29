@@ -19,21 +19,31 @@ let UserSchema=mongoose.Schema({
 
 let Recipe=mongoose.model('Recipe',UserSchema);
 
-// let a=new Recipe({
-//     email:'ashrfmathkour@gmail.com',
-//     recipes:[{
-//         name:"Baked Chicken",
-//         image:"https://www.edamam.com/web-img/01c/01cacb70890274fb7b7cebb975a93231.jp...",
-//         calories:901.58575
-//     }]
-// })
-// a.save()
+
+
+addUser=(req,res)=>{
+    let email=req.params.email;
+    Recipe.find({email:email}).then(result=>{
+     if (result.length>0){res.json(`welcom back ${email}`)}
+         else{
+            let a=new Recipe({
+                email:email,
+                recipes:[]
+            })
+            a.save()
+            res.json('user created')
+         }
+    
+    }).catch(err=>res.json(err))
+
+
+}
 
 
 
 getFav=(req,res)=>{
     let email=req.params.email;
-    Recipe.find({email:email}).then(result=>res.json(result)).catch(err=>res.json(err))
+    Recipe.find({email:email}).then(result=>{res.json(result)}).catch(err=>res.json(err))
     
 }
 
@@ -68,15 +78,23 @@ updRecipe=(req,res)=>{
 }
 
 deleteRecipe=(req,res)=>{
-    let id =req.params.id;
-    Recipe.findByIdAndDelete(id).then(result=>{
-        if(result){res.status(200).json('deleted succesfully')}
-        else{res.status(404).json('user not found or already deleted')}
-    }).catch(err=>{res.status(500).send({msg:'plese provide a valid id ',error:err})})
+    let email=req.params.email;
+    let id=req.body.id
+    Recipe.find({email:email})
+    .then(result=>{
+       let indx= result[0].recipes.findIndex(ele=>{
+            return id===ele._id 
+        })
+        console.log(result)
+        result[0].recipes.splice(indx,1);
+        result[0].save();
+        res.json(result)
+     })
+     .catch(err=>res.json(err))
 }
 
 
 
 
 
-module.exports= {addRecipe,getFav,updRecipe,deleteRecipe};
+module.exports= {addRecipe,getFav,updRecipe,deleteRecipe,addUser};

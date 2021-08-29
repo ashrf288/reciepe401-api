@@ -6,7 +6,7 @@ require('dotenv').config();
 app.use(express.json());
 app.use(cors());
 const getall=require('./controllers/contorlloers')
-const {addRecipe,getFav,updRecipe,deleteRecipe}=require('./controllers/db')
+const {addRecipe,getFav,updRecipe,deleteRecipe,addUser}=require('./controllers/db')
 const PORT=process.env.PORT;
 
 
@@ -14,7 +14,8 @@ app.get('/',getall);
 //////// user logged in 
 app.get('/fav/:email',getFav);
 app.post('/add/:email',addRecipe);
-app.put('/update/:email',updRecipe)
-app.delete('/delete/:id',deleteRecipe)
+app.post('/addUser/:email',addUser);
+app.put('/update/:email',updRecipe);
+app.delete('/delete/:email',deleteRecipe);
 
 app.listen(PORT,console.log(`on port ${PORT}`))
